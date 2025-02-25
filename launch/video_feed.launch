@@ -1,0 +1,9 @@
+<launch>
+    <!-- Launch video_stream_opencv node -->
+    <node pkg="video_stream_opencv" type="video_stream_node" name="video_stream" output="screen">
+        <param name="video_stream_provider" value="file:///home/thanasis/submarine_coverage/2024-06-05-122625.webm"/>
+        <param name="fps" value="30"/>
+        <param name="frame_id" value="camera_frame"/>
+        <param name="queue_size" value="2"/>
+    </node>
+</launch>

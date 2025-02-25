@@ -21,7 +21,7 @@
     <group ns="BlueRov2">
         <!-- spawn in Gazebo with GUI -->
         <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)"/>
-        <node name="spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model BlueRov2 -param robot_description -x 0 -y 0 -z 0 -R 3.14927 -P 0 -Y 0"/>
+        <node name="spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model BlueRov2 -param robot_description -x 0 -y 0 -z 10 -R 3.14927 -P 0 -Y 0"/>
         <rosparam file="$(find bluerov_ros_playground)/config/bluerov2_thrusters.yaml" command="load"/>
     </group>
 
@@ -42,7 +42,14 @@
         <rosparam command="load" file="$(arg config_yaml)"/>
     </node>
 
-    <node pkg="rosservice" type="rosservice" name="mavros_set_stream" args="call --wait /mavros/set_stream_rate 0 10 1"/>
+    <!-- Ensure MAVROS services are available and set initial mode -->
+    <node pkg="rosservice" type="rosservice" name="mavros_set_mode" output="screen" args="call --wait /mavros/set_mode 0 STABILIZE"/>
+    
+    <!-- Arm the vehicle using rosrun to call the arming service -->
+    <node pkg="rosrun" type="mavros_cmd" name="arm_vehicle" output="screen" args="arming arm"/>
+
+    <node pkg="rosservice" type="rosservice" name="mavros_set_stream" output="screen" args="call --wait /mavros/set_stream_rate 0 10 1"/>
+
 
     <!-- start the image_view -->
     <node respawn="true" pkg="image_view" type="image_view" name="image_view">
